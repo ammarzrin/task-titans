@@ -13,15 +13,15 @@
 *   **Tech Stack:**
     *   Frontend: Flutter
     *   Backend: Express.js (RESTful APIs)
-    *   Database: MySQL
+    *   Database: MySQL/Supabase/Firebase (I’m still deciding. Guide me to which one is suitable/preferred for my project.)
 
 ---
 
 ## 2. User Roles & Family Setup
 
 *   **Family Creation Flow:**
-    *   How does a family get started? (e.g., Parent signs up, creates family, then invites others. Or, all members sign up individually and link to a family ID?)
-    *   Who has administrative privileges (e.g., creating other parent accounts, adding children)?
+    *   A Parent signs up, creates a Family, another parent can join via Family ID, then whichever parent can create new Children/Hero profiles for their children.
+    *   Parents (Admins) in a Family (Group) has administrative privileges to create new children profiles, create new tasks available, create their own customised rewards, and approve their children's completed tasks.
 
 *   **Child Account Access:**
     *   Will children have their own login credentials (email/password, username/password)?
