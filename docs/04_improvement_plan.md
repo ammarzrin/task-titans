@@ -6,56 +6,50 @@ This document outlines key questions and considerations for the App Polishing an
 
 *   **Animations & Transitions:**
     *   Where can subtle animations (e.g., button presses, screen transitions, item additions/deletions) be added to enhance feedback and delight?
-    *   What kind of splash screen or loading animations should be implemented?
-*   **Micro-interactions:**
-    *   Are there small interactive details that can improve user engagement (e.g., haptic feedback, subtle sound effects for earning XP/Gold, celebratory animations)?
+    *   **Comic Transitions:** Implement "page turn" effects or comic panel zooms for navigation.
+    *   **Hero Feedback:** Add "POW!" and "ZAP!" animated text bursts when completing missions.
 *   **Theming & Customization:**
-    *   Could users (parents/children) customize aspects of the app's theme (e.g., light/dark mode, avatar selection for children, custom reward icons)?
-*   **Empty States & Error Screens:**
-    *   Are all empty states (e.g., no quests, no rewards yet) designed with clear guidance and engaging visuals?
-    *   Are error screens user-friendly and helpful?
+    *   **Hero Customization:** Allow children to unlock different superhero suits or color schemes for their avatar.
+    *   **Base Customization:** Allow customization of the "Hero HQ" dashboard background.
 
-## 2. Additional Optional Features (Beyond MVP)
+## 2. High-Priority Technical Enhancements
 
-*   **Gamification Elements:**
-    *   **Badges/Achievements:** Implement a system for earning digital badges for milestones (e.g., "Quest Master," "Gold Hoarder"). What are the criteria for these badges?
-    *   **Streaks:** Track and reward consistent chore completion streaks.
-    *   **Special Events/Challenges:** Introduce time-limited challenges or events with bonus XP/Gold.
-    *   **Avatars/Customization:** Allow children to customize their hero avatars with earned Gold or achievements.
-*   **Advanced Quest Features:**
-    *   **Quest Templates:** Allow parents to save and reuse quest templates.
-    *   **Scheduled Quests:** More advanced scheduling options for recurring quests.
-    *   **Group Quests:** Enhance multi-child quest claiming and collaborative completion.
-*   **Communication Features:**
-    *   In-app messaging between parents and children regarding quests or rewards.
-    *   Push notifications for new quests, quest approvals, or reward redemptions.
-*   **Reporting & Analytics:**
-    *   Detailed progress reports for parents (e.g., child's quest completion rate, average Gold earned per week).
-*   **Multi-language Support:**
-    *   Consider internationalization (i18n) for supporting multiple languages.
+*   **Real-time Updates:**
+    *   Upgrade the data layer to use **Supabase Streams**.
+    *   Goal: Instant updates across devices (e.g., Parent approves -> Child sees Gold increase instantly without refresh).
+*   **Push Notifications:**
+    *   Integrate OneSignal or FCM (via Supabase Edge Functions).
+    *   Triggers: "New Mission Assigned!", "Mission Approved!", "Reward Purchased!".
+*   **Offline Mode:**
+    *   Implement local caching (e.g., Hive or SQLite) to allow viewing missions and tracking offline, syncing when connectivity returns.
 
-## 3. Data Presets and Onboarding
+## 3. Advanced Gamification (Superhero Theme)
 
-*   **Initial Data:** What default data (e.g., example quests, a few starter rewards) should be pre-populated for new families to ease onboarding?
-*   **Onboarding Flow:** Design a welcoming and informative onboarding experience for new parents and children.
-*   **Tutorials/Help:** Implement in-app tutorials or a help section for common tasks.
+*   **Badges/Achievements:**
+    *   Implement "Medals of Honor" for milestones (e.g., "Speedster" for fast completion, "Guardian" for 10-day streaks).
+*   **Leaderboards:**
+    *   Implement the full "League of Titans" family leaderboard with weekly resets and trophy logic.
+*   **Streaks:**
+    *   "Power Streaks": Consecutive days of completed missions boost XP multipliers.
 
-## 4. Performance and Optimization
+## 4. Advanced Quest Features
 
-*   **App Size:** Strategies to keep the Flutter app bundle size minimal.
-*   **Load Times:** Optimize data fetching and rendering to ensure quick load times for all screens.
-*   **Backend Performance:** Load testing the Express.js API to ensure it can handle expected user loads.
-*   **Database Optimization:** Indexing, query optimization, and connection pooling for the chosen database.
+*   **Quest Templates:** Allow parents to save and reuse complex mission setups.
+*   **Group Missions:** "Team-Up" missions where multiple siblings must collaborate to complete a large task (e.g., "Clean the Garage").
 
-## 5. User Feedback and Iteration
+## 5. Performance and Optimization
 
-*   **Feedback Mechanism:** Implement an in-app feedback system for users to report bugs or suggest features.
-*   **Analytics Integration:** Integrate analytics (e.g., Google Analytics for Firebase, Mixpanel) to understand user behavior and identify areas for improvement.
-*   **A/B Testing:** Consider implementing A/B testing for new features or UI changes.
+*   **App Size:** Strategies to keep the Flutter app bundle size minimal (optimizing SVG assets and fonts).
+*   **Database Optimization:**
+    *   Refine Supabase RLS policies for security and speed.
+    *   Add database indexing for frequent queries (e.g., filtering missions by status).
 
-## 6. Maintenance and Scalability
+## 6. User Feedback and Iteration
 
-*   **Code Quality:** Regular code reviews, refactoring, and adherence to coding standards.
-*   **Monitoring & Logging:** Set up comprehensive monitoring and logging for both frontend and backend to quickly identify and resolve issues.
-*   **Backup & Recovery:** Implement robust backup and recovery strategies for the database.
-*   **Security Audits:** Regular security audits and updates to libraries and dependencies.
+*   **Feedback Mechanism:** Implement an in-app feedback system.
+*   **Analytics:** Integrate Supabase Analytics or Firebase Analytics to track feature usage.
+
+## 7. Maintenance and Scalability
+
+*   **Code Quality:** Regular code reviews and refactoring.
+*   **Security Audits:** Regular review of RLS policies to ensure data isolation remains strict.

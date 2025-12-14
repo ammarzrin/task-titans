@@ -1,52 +1,50 @@
-# 03. Integration Plan: Frontend-Backend Integration Phase
+# 03. Integration Plan: Supabase & Flutter Integration
 
-This document outlines key questions and considerations for the Integration Phase of the Task Titans application, focusing on how the Flutter frontend and Express.js backend will seamlessly communicate and work together.
+This document outlines the finalized integration strategy for connecting the Flutter frontend to the Supabase backend using Riverpod.
 
-## 1. API Contract Definition
+## 1. Client Setup & Architecture
 
-*   **API Documentation:** How will the API endpoints, request/response formats, and data models be documented? (e.g., OpenAPI/Swagger, Postman Collections, simple Markdown files).
-*   **Data Models Consistency:** How will we ensure that data models (e.g., Quest, User, Family, Reward) are consistent between the backend API responses and the frontend's data structures (e.g., Dart classes)?
-*   **Version Control:** Will the API have versioning? (e.g., `/api/v1/...`).
+*   **Supabase Client Access:**
+    *   The `SupabaseClient` will be exposed via a global Riverpod provider: `final supabaseProvider = Provider((ref) => Supabase.instance.client);`.
+    *   This ensures easy dependency injection and testability.
 
-## 2. Communication Mechanisms
+*   **Repository Pattern:**
+    *   We will **NOT** call Supabase directly from the UI.
+    *   We will implement a **Repository Layer** to encapsulate data access logic.
+    *   **Planned Repositories:**
+        *   `AuthRepository`: Handles Login, Sign Up, and PIN verification.
+        *   `ProfileRepository`: Fetches and updates user profiles (Switching current user).
+        *   `MissionRepository`: Handles CRUD for missions and approvals.
+        *   `RewardRepository`: Handles Shop items and Redemptions (via RPC).
 
-*   **HTTP Client:** Which HTTP client will the Flutter app use to communicate with the Express.js backend? (e.g., `http` package, `Dio`, `Chopper`).
-*   **Authentication Flow:**
-    *   How will the Flutter app handle user login, receive authentication tokens (e.g., JWT), and store them securely?
-    *   How will these tokens be sent with subsequent API requests for authenticated endpoints?
-    *   What is the token refresh strategy?
-*   **Real-time Communication (if applicable):** Are there any features that would benefit from real-time updates (e.g., quest approval notifications, live leaderboard updates)? If so, how will this be implemented (e.g., WebSockets, Firebase/Supabase real-time features)?
+## 2. Data Flow & State Management
 
-## 3. Data Flow and State Management
+*   **State Management:** Riverpod (`ConsumerWidget`, `StateNotifier` / `AsyncNotifier`).
+*   **Data Sync Strategy:** **"Invalidate on Mutation"**.
+    *   Providers will be used to fetch data (e.g., `activeMissionsProvider`).
+    *   When a mutation occurs (e.g., `addMission`), the corresponding list provider will be **invalidated** (`ref.invalidate(...)`).
+    *   This forces Riverpod to re-fetch the freshest data automatically, keeping the UI in sync without complex manual updates.
 
-*   **Frontend Data Layer:** How will the Flutter frontend manage the data fetched from the backend? (e.g., dedicated service classes, repositories, direct state management integration).
-*   **State Updates:** How will changes made via the frontend (e.g., child claims quest) be sent to the backend, and how will the frontend's local state be updated to reflect successful backend operations?
-*   **Offline Capability:** Is any level of offline functionality required? If so, how will data synchronization be handled when the app comes online?
+## 3. Data Modeling & Type Safety
 
-## 4. Error Handling and Resilience
+*   **Models:** Strict Dart models will be created for all database tables (`Profile`, `Mission`, `Reward`).
+*   **Serialization:** We will use **`json_serializable`** (or `freezed`) to robustly handle the conversion between Supabase JSON responses and Dart objects.
+*   **Consistency:** Model properties must match Database column names exactly to ensure smooth serialization.
 
-*   **API Error Handling:**
-    *   How will the frontend gracefully handle different types of errors from the backend (e.g., network errors, validation errors, authentication failures, server errors)?
-    *   What kind of user feedback will be provided for errors?
-*   **Loading States:** How will loading indicators be displayed in the UI while waiting for API responses?
-*   **Retry Mechanisms:** Will there be any automatic retry mechanisms for transient network issues?
-*   **Timeout Strategies:** How will API request timeouts be managed?
+## 4. Error Handling
 
-## 5. Deployment and Environment Configuration
+*   **Strategy:**
+    *   The Repository layer is responsible for catching **Supabase-specific errors** (e.g., `PostgrestException`, `AuthException`).
+    *   These low-level errors will be caught and re-thrown as custom, user-friendly **AppExceptions** (e.g., `NetworkException`, `PermissionException`).
+    *   The UI layer (Notifiers) will catch these `AppExceptions` and display appropriate Snackbars or Error Widgets.
 
-*   **Backend Deployment:** Where will the Express.js backend be deployed (e.g., AWS EC2, Google Cloud Run, Heroku, Vercel)?
-*   **Frontend Deployment:** How will the Flutter app be deployed to app stores (Google Play, Apple App Store)?
-*   **Environment Variables:** How will sensitive information (e.g., API keys, database credentials) and environment-specific configurations (e.g., backend API URL for development, staging, production) be managed for both frontend and backend?
+## 5. Security & Configuration
 
-## 6. Testing Integration
+*   **Environment Variables:**
+    *   `SUPABASE_URL` and `SUPABASE_ANON_KEY` will be managed using **`flutter_dotenv`** (for development convenience) or **`--dart-define`** (for production security).
+    *   Keys will NOT be hardcoded in the source code.
 
-*   **Unit Tests:** Will there be unit tests for frontend service layers that interact with the API?
-*   **Integration Tests:** How will we test the actual communication between the frontend and a mocked or live backend?
-*   **End-to-End Tests:** How will we set up end-to-end tests that cover full user flows involving both frontend and backend?
+## 6. Testing Strategy
 
-## 7. Security Considerations
-
-*   **Data in Transit:** How will data be secured during transmission between frontend and backend (e.g., HTTPS)?
-*   **Secrets Management:** How will API keys and other secrets be handled securely without exposing them in the client-side code or public repositories?
-*   **Input Sanitization:** Will both frontend and backend perform input sanitization to prevent common vulnerabilities (e.g., XSS, SQL Injection)?
-*   **Rate Limiting:** Will the backend implement rate limiting to prevent abuse?
+*   **Unit Tests:** Repositories can be unit tested by mocking the `SupabaseClient`.
+*   **Widget Tests:** UI components can be tested by overriding the Riverpod repositories with mock implementations (e.g., `missionRepositoryProvider.overrideWith((ref) => MockMissionRepository())`).
