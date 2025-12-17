@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Titans Design System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Nunito:wght@600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            /* Colors */
+            --electric-blue: #0056FF;
+            --vigilante-red: #FF1D25;
+            --lightning-yellow: #FFD700;
+            --hulk-green: #22E23B;
+            --comic-black: #000000;
+            --pure-white: #FFFFFF;
+            --halftone-grey: #F5F5F5;
+            --midnight-grey: #1A1A1A;
+        }
+
+        body {
+            background-color: var(--halftone-grey);
+            background-image: radial-gradient(#000 1px, transparent 1px);
+            background-size: 20px 20px;
+            /* Halftone effect */
+            font-family: 'Nunito', sans-serif;
+            color: var(--midnight-grey);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+            align-items: center;
+        }
+
+        /* Typography Defaults */
+        h1,
+        h2,
+        h3,
+        .bungee-font {
+            font-family: 'Bungee', cursive;
+            text-transform: uppercase;
+            color: var(--comic-black);
+            margin: 0;
+        }
+
+        /* Container for Images/Sections */
+        .section-container {
+            background: var(--pure-white);
+            border: 3px solid var(--comic-black);
+            box-shadow: 8px 8px 0px var(--comic-black);
+            /* Hard Shadow */
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 800px;
+            position: relative;
+        }
+
+        .section-label {
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            background: var(--lightning-yellow);
+            border: 2px solid var(--comic-black);
+            padding: 5px 15px;
+            font-family: 'Bungee', cursive;
+            box-shadow: 4px 4px 0px var(--comic-black);
+            transform: rotate(-2deg);
+        }
+
+        /* 1. Color System Styles */
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 20px;
+        }
+
+        .swatch {
+            border: 2px solid var(--comic-black);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 4px 4px 0px var(--comic-black);
+        }
+
+        .swatch-color {
+            height: 80px;
+            width: 100%;
+        }
+
+        .swatch-info {
+            padding: 10px;
+            background: var(--pure-white);
+            font-size: 14px;
+            font-weight: 800;
+            border-top: 2px solid var(--comic-black);
+        }
+
+        /* 2. Typography Styles */
+        .type-row {
+            margin-bottom: 20px;
+            border-bottom: 2px dashed #ddd;
+            padding-bottom: 10px;
+        }
+
+        .type-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        /* 3. Component Styles */
+        .component-row {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        /* Buttons */
+        .btn {
+            font-family: 'Bungee', cursive;
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.1s;
+        }
+
+        .btn-primary {
+            background-color: var(--electric-blue);
+            color: white;
+            border: 3px solid var(--comic-black);
+            border-radius: 12px;
+            box-shadow: 4px 4px 0px var(--comic-black);
+        }
+
+        .btn-primary:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px var(--comic-black);
+        }
+
+        .btn-secondary {
+            background-color: var(--pure-white);
+            color: var(--electric-blue);
+            border: 2px solid var(--comic-black);
+            border-radius: 12px;
+            box-shadow: 2px 2px 0px var(--comic-black);
+        }
+
+        /* Cards */
+        .mission-card {
+            background: var(--pure-white);
+            border: 2px solid var(--comic-black);
+            border-radius: 16px;
+            box-shadow: 4px 4px 0px var(--comic-black);
+            padding: 16px;
+            width: 250px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .badge-pill {
+            align-self: flex-start;
+            background: var(--lightning-yellow);
+            border: 2px solid var(--comic-black);
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        /* Inputs */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 300px;
+        }
+
+        .input-label {
+            font-family: 'Bungee';
+            font-size: 14px;
+        }
+
+        .custom-input {
+            padding: 12px;
+            border: 2px solid var(--comic-black);
+            border-radius: 12px;
+            font-family: 'Nunito';
+            font-weight: 600;
+            outline: none;
+        }
+
+        .custom-input:focus {
+            border-color: var(--electric-blue);
+            box-shadow: 4px 4px 0px var(--comic-black);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="section-container">
+        <div class="section-label">01. Power Pop Palette</div>
+        <div class="color-grid">
+            <div class="swatch">
+                <div class="swatch-color" style="background-color: var(--electric-blue);"></div>
+                <div class="swatch-info">Electric Blue<br>#0056FF</div>
+            </div>
+            <div class="swatch">
+                <div class="swatch-color" style="background-color: var(--vigilante-red);"></div>
+                <div class="swatch-info">Vigilante Red<br>#FF1D25</div>
+            </div>
+            <div class="swatch">
+                <div class="swatch-color" style="background-color: var(--lightning-yellow);"></div>
+                <div class="swatch-info">Lightning Yellow<br>#FFD700</div>
+            </div>
+            <div class="swatch">
+                <div class="swatch-color" style="background-color: var(--hulk-green);"></div>
+                <div class="swatch-info">Hulk Green<br>#22E23B</div>
+            </div>
+            <div class="swatch">
+                <div class="swatch-color" style="background-color: var(--midnight-grey);"></div>
+                <div class="swatch-info" style="color:white; background:black;">Midnight Grey<br>#1A1A1A</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-container">
+        <div class="section-label">02. Typography</div>
+
+        <div class="type-row">
+            <div class="type-label">H1 (HERO) - BUNGEE 32px</div>
+            <h1 style="font-size: 32px; line-height: 1.1;">MISSION CONTROL</h1>
+        </div>
+
+        <div class="type-row">
+            <div class="type-label">H2 (TITLE) - BUNGEE 24px</div>
+            <h2 style="font-size: 24px; line-height: 1.2;">Today's Tasks</h2>
+        </div>
+
+        <div class="type-row">
+            <div class="type-label">H3 (SUBTITLE) - BUNGEE 20px</div>
+            <h3 style="font-size: 20px; line-height: 1.2;">Rewards Shop</h3>
+        </div>
+
+        <div class="type-row" style="border:none;">
+            <div class="type-label">BODY LARGE - NUNITO BOLD 18px</div>
+            <p style="font-size: 18px; font-weight: 700; line-height: 1.5; margin:0;">
+                Every chore is a mission. Complete your tasks to earn XP and level up your titan!
+            </p>
+        </div>
+    </div>
+
+    <div class="section-container">
+        <div class="section-label">03. UI Components</div>
+
+        <h3 style="margin-bottom: 15px;">Buttons (Interactive)</h3>
+        <div class="component-row">
+            <button class="btn btn-primary">Claim Reward!</button>
+            <button class="btn btn-secondary">Cancel</button>
+            <button class="btn btn-primary" style="background-color: var(--vigilante-red);">Delete</button>
+        </div>
+
+        <h3 style="margin-bottom: 15px;">Inputs</h3>
+        <div class="component-row">
+            <div class="input-group">
+                <label class="input-label">Titan Name</label>
+                <input type="text" class="custom-input" placeholder="Enter hero name..." value="Captain Clean">
+            </div>
+        </div>
+
+        <h3 style="margin-bottom: 15px;">Mission Card</h3>
+        <div class="component-row">
+            <div class="mission-card">
+                <div class="badge-pill">500 XP</div>
+                <div style="font-size: 40px;">🛏️</div>
+                <h3 style="font-size: 18px;">Make the Bed</h3>
+                <p style="font-size: 14px; font-weight: 600; margin:0;">Make sure the corners are tucked in!</p>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
