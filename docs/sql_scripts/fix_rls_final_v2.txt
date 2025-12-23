@@ -1,0 +1,29 @@
+-- 1. CLEANUP (With CASCADE to remove dependent policies)
+drop policy if exists "Users can view family members" on public.profiles;
+drop function if exists get_my_family_id() cascade; -- This deletes the 'insert' policy too!
+
+-- 2. CREATE HELPER FUNCTION (SECURITY DEFINER is key)
+create or replace function lookup_user_family_id(user_uid uuid)
+returns uuid
+language sql
+security definer
+set search_path = public
+as $$
+  select family_id from profiles where id = user_uid limit 1;
+$$;
+
+-- 3. CREATE VIEW POLICY
+create policy "Users can view family members"
+on public.profiles for select
+using (
+  family_id = lookup_user_family_id(auth.uid())
+);
+
+-- 4. RE-CREATE INSERT POLICY (Since we deleted it via cascade)
+create policy "Users can insert profiles"
+on public.profiles for insert
+with check (
+  auth.uid() = id
+  OR
+  family_id = lookup_user_family_id(auth.uid())
+);

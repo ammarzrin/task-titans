@@ -1,0 +1,45 @@
+-- NUCLEAR FIX: RESET ALL PROFILE POLICIES
+-- Run this to clear out any conflicting/recursive bad policies and set up the correct ones.
+
+-- 1. Disable RLS temporarily (optional, but ensures we start clean if we were to wipe policies manually)
+alter table public.profiles disable row level security;
+alter table public.profiles enable row level security;
+
+-- 2. Drop existing policies (names might vary, so we try to drop common ones)
+drop policy if exists "Users can view own profile" on public.profiles;
+drop policy if exists "Users can view family members" on public.profiles;
+drop policy if exists "Enable insert for authenticated users only" on public.profiles;
+drop policy if exists "Users can insert their own profile" on public.profiles;
+
+-- 3. Create "View Own Profile" (Essential for checking if you exist)
+create policy "Users can view own profile"
+on public.profiles for select
+using ( auth.uid() = id );
+
+-- 4. Create "View Family Members" (Essential for Profile Selection Screen)
+-- Uses the helper function to avoid recursion
+create or replace function get_my_family_id()
+returns uuid
+language sql
+security definer
+set search_path = public
+as $$
+  select family_id from profiles where id = auth.uid() limit 1;
+$$;
+
+create policy "Users can view family members"
+on public.profiles for select
+using (
+  family_id = get_my_family_id()
+);
+
+-- 5. Create "Insert Own Profile" (For creating child profiles later)
+create policy "Users can insert profiles"
+on public.profiles for insert
+with check (
+  -- Allow creating YOUR OWN profile (Admin setup)
+  auth.uid() = id
+  OR
+  -- Allow creating CHILD profiles for your family
+  family_id = get_my_family_id()
+);

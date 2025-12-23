@@ -1,0 +1,15 @@
+-- FIX SELECT POLICIES
+
+-- 1. Allow users to see their OWN profile (Critical for that first fetch)
+create policy "Users can view own profile"
+on public.profiles for select
+using ( auth.uid() = id );
+
+-- 2. Allow users to see OTHER profiles in the same family
+create policy "Users can view family members"
+on public.profiles for select
+using (
+  family_id in (
+    select family_id from public.profiles where id = auth.uid()
+  )
+);

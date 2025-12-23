@@ -1,0 +1,8 @@
+-- FIX: Allow profiles that are NOT Auth Users (for Children)
+
+-- 1. Drop the foreign key constraint
+-- This allows us to insert a Profile where 'id' is a random UUID, not linked to auth.users
+alter table public.profiles drop constraint if exists profiles_id_fkey;
+
+-- 2. (Optional) We still want Parents to match Auth ID, but we enforce that in code/triggers, or just by convention.
+-- The Primary Key remains UUID.

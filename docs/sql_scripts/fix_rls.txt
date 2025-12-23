@@ -1,0 +1,23 @@
+-- FIX RLS POLICIES
+
+-- 1. Allow any authenticated user to create a new Family
+create policy "Authenticated users can create families"
+on public.families for insert
+to authenticated
+with check (true);
+
+-- 2. Allow users to update their own family (e.g. change name)
+create policy "Users can update their own family"
+on public.families for update
+using (
+  id in (
+    select family_id from public.profiles where id = auth.uid()
+  )
+);
+
+-- 3. Ensure users can insert their OWN profile (Critical for onboarding)
+-- (You might have this already, but running it again safely won't hurt if you use IF NOT EXISTS, 
+-- but Supabase SQL editor handles errors fine. If it exists, it will just error on this line).
+create policy "Users can insert their own profile"
+on public.profiles for insert
+with check ( auth.uid() = id );

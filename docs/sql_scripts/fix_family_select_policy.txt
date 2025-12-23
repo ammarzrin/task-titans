@@ -1,0 +1,7 @@
+-- FIX: Allow users to find families to join
+-- Currently, users cannot query the families table to check an invite code because RLS blocks it.
+
+create policy "Authenticated users can view families"
+on public.families for select
+to authenticated
+using (true);

@@ -1,0 +1,22 @@
+-- FIX INFINITE RECURSION
+
+-- 1. Drop the problematic policy
+drop policy if exists "Users can view family members" on public.profiles;
+
+-- 2. Create a secure helper function to get the current user's family_id
+-- This function runs as "admin" (security definer), so it bypasses RLS to read the profile.
+create or replace function get_my_family_id()
+returns uuid
+language sql
+security definer
+set search_path = public
+as $$
+  select family_id from profiles where id = auth.uid() limit 1;
+$$;
+
+-- 3. Re-create the policy using the helper function
+create policy "Users can view family members"
+on public.profiles for select
+using (
+  family_id = get_my_family_id()
+);

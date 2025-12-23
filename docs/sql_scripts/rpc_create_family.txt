@@ -1,0 +1,26 @@
+-- Function to create Family and Profile in one atomic transaction
+-- Bypasses RLS to avoid "chicken and egg" permission errors
+create or replace function create_complete_family_account(
+  family_name text,
+  username text,
+  avatar_id text,
+  pin_code text
+)
+returns void
+language plpgsql
+security definer -- This is the magic. It runs as Admin.
+as $$
+declare
+  new_family_id uuid;
+begin
+  -- 1. Create Family and get ID
+  insert into public.families (name)
+  values (family_name)
+  returning id into new_family_id;
+
+  -- 2. Create Profile linked to that family
+  -- auth.uid() is still available in security definer functions!
+  insert into public.profiles (id, family_id, role, username, avatar_id, pin_code)
+  values (auth.uid(), new_family_id, 'parent', username, avatar_id, pin_code);
+end;
+$$;

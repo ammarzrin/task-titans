@@ -5,7 +5,7 @@ import 'package:tasktitans/core/theme/app_typography.dart';
 class ComicButton extends StatefulWidget {
   final String text;
   final VoidCallback? onPressed;
-  final Color backgroundColor;
+  final Color color;
   final Color textColor;
   final double height;
   final double fontSize;
@@ -15,7 +15,7 @@ class ComicButton extends StatefulWidget {
     super.key,
     required this.text,
     required this.onPressed,
-    this.backgroundColor = AppColors.electricBlue,
+    this.color = AppColors.electricBlue,
     this.textColor = AppColors.pureWhite,
     this.height = 56.0,
     this.fontSize = 16.0,
@@ -83,7 +83,7 @@ class _ComicButtonState extends State<ComicButton> {
               bottom: offset,
               child: Container(
                 decoration: BoxDecoration(
-                  color: widget.onPressed == null ? Colors.grey : widget.backgroundColor,
+                  color: widget.onPressed == null ? Colors.grey : widget.color,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: AppColors.comicBlack, width: 2),
                 ),

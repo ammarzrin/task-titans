@@ -1,0 +1,69 @@
+-- 5. Create MISSIONS table
+create table public.missions (
+  id uuid primary key default gen_random_uuid(),
+  family_id uuid references public.families(id) on delete cascade not null,
+  title text not null,
+  difficulty text not null check (difficulty in ('easy', 'medium', 'hard', 'epic')),
+  icon_id text not null,
+  assigned_to uuid references public.profiles(id) on delete set null,
+  status text not null default 'available' check (status in ('available', 'in_progress', 'pending_approval', 'completed')),
+  xp_reward int not null,
+  gold_reward int not null,
+  created_by uuid references public.profiles(id) on delete set null
+);
+
+-- 6. Create REWARDS table
+create table public.rewards (
+  id uuid primary key default gen_random_uuid(),
+  family_id uuid references public.families(id) on delete cascade not null,
+  title text not null,
+  cost int not null,
+  icon_id text not null,
+  stock int -- NULL means unlimited
+);
+
+-- 7. Create INVENTORY table
+create table public.inventory (
+  id uuid primary key default gen_random_uuid(),
+  child_id uuid references public.profiles(id) on delete cascade not null,
+  reward_id uuid references public.rewards(id) on delete cascade not null,
+  status text not null default 'active' check (status in ('active', 'archived')),
+  purchased_at timestamptz default now()
+);
+
+-- 8. Enable RLS
+alter table public.missions enable row level security;
+alter table public.rewards enable row level security;
+alter table public.inventory enable row level security;
+
+-- 9. Create Policies for Missions/Rewards/Inventory
+-- Simple rule: If you belong to the family, you can do anything (for now).
+-- In a real app, you'd restrict Child updates more strictly.
+
+create policy "Family members can view/edit missions"
+on public.missions for all
+using (
+  family_id in (
+    select family_id from public.profiles where id = auth.uid()
+  )
+);
+
+create policy "Family members can view/edit rewards"
+on public.rewards for all
+using (
+  family_id in (
+    select family_id from public.profiles where id = auth.uid()
+  )
+);
+
+-- Inventory links to child_id, so we check the child's family
+create policy "Family members can view/edit inventory"
+on public.inventory for all
+using (
+  child_id in (
+    select id from public.profiles 
+    where family_id in (
+        select family_id from public.profiles where id = auth.uid()
+    )
+  )
+);

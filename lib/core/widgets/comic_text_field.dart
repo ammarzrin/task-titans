@@ -4,7 +4,7 @@ import 'package:tasktitans/core/theme/app_typography.dart';
 
 class ComicTextField extends StatelessWidget {
   final String label;
-  final String? hint;
+  final String? hintText;
   final TextEditingController? controller;
   final bool obscureText;
   final TextInputType keyboardType;
@@ -13,7 +13,7 @@ class ComicTextField extends StatelessWidget {
   const ComicTextField({
     super.key,
     required this.label,
-    this.hint,
+    this.hintText,
     this.controller,
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
@@ -47,7 +47,7 @@ class ComicTextField extends StatelessWidget {
             keyboardType: keyboardType,
             style: AppTypography.bodyMedium.copyWith(color: AppColors.comicBlack),
             decoration: InputDecoration(
-              hintText: hint,
+              hintText: hintText,
               hintStyle: AppTypography.bodyMedium.copyWith(color: Colors.grey),
               filled: true,
               fillColor: AppColors.pureWhite,
