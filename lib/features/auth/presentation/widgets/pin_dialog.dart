@@ -25,7 +25,7 @@ class _PinDialogState extends ConsumerState<PinDialog> {
       // Success!
       ref.read(userNotifierProvider.notifier).selectProfile(widget.profile);
       context.pop(); // Close dialog
-      
+
       // Navigate based on role
       if (widget.profile.role == UserRole.parent) {
         context.go('/parent/dashboard');
@@ -91,9 +91,9 @@ class _PinDialogState extends ConsumerState<PinDialog> {
           children: [
             Text(
               'SECRET IDENTITY',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontFamily: 'Bungee',
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontFamily: 'Bungee'),
             ),
             const SizedBox(height: 8),
             Text(
@@ -125,7 +125,7 @@ class _PinDialogState extends ConsumerState<PinDialog> {
             const SizedBox(height: 24),
             ComicButton(
               text: 'CANCEL',
-              color: AppColors.halftoneGrey,
+              color: AppColors.vigilanteRed,
               onPressed: () => context.pop(),
             ),
           ],

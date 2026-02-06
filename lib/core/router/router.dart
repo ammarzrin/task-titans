@@ -15,6 +15,9 @@ import 'package:tasktitans/features/auth/presentation/onboarding/admin_profile_s
 import 'package:tasktitans/features/auth/presentation/onboarding/family_setup_screen.dart';
 import 'package:tasktitans/features/auth/presentation/signup_screen.dart';
 
+import 'package:tasktitans/features/dashboard/presentation/child_dashboard_screen.dart';
+import 'package:tasktitans/features/dashboard/presentation/child_dashboard_shell.dart';
+
 final routerProvider = Provider<GoRouter>((ref) {
   final authRepository = ref.watch(authRepositoryProvider);
 
@@ -61,6 +64,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/profile-selection',
         builder: (context, state) => const ProfileSelectionScreen(),
       ),
+      // Parent Shell
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           return ParentDashboardShell(navigationShell: navigationShell);
@@ -96,11 +100,41 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
         ],
       ),
-      GoRoute(
-        path: '/child/dashboard',
-        builder: (context, state) => const Scaffold(
-          body: Center(child: Text('Child Dashboard (Hero HQ)')),
-        ),
+      // Child Shell
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          return ChildDashboardShell(navigationShell: navigationShell);
+        },
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/child/dashboard',
+                builder: (context, state) => const ChildDashboardScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/child/missions',
+                builder: (context, state) => const Scaffold(
+                  body: Center(child: Text('My Active Missions')),
+                ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/child/store',
+                builder: (context, state) => const Scaffold(
+                  body: Center(child: Text('Loot Store')),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     ],
   );

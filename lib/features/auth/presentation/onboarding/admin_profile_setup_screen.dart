@@ -11,10 +11,12 @@ class AdminProfileSetupScreen extends ConsumerStatefulWidget {
   const AdminProfileSetupScreen({super.key});
 
   @override
-  ConsumerState<AdminProfileSetupScreen> createState() => _AdminProfileSetupScreenState();
+  ConsumerState<AdminProfileSetupScreen> createState() =>
+      _AdminProfileSetupScreenState();
 }
 
-class _AdminProfileSetupScreenState extends ConsumerState<AdminProfileSetupScreen> {
+class _AdminProfileSetupScreenState
+    extends ConsumerState<AdminProfileSetupScreen> {
   final _usernameController = TextEditingController();
   final _pinController = TextEditingController();
 
@@ -31,17 +33,23 @@ class _AdminProfileSetupScreenState extends ConsumerState<AdminProfileSetupScree
 
     if (username.isEmpty || pin.length != 4) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a username and a 4-digit PIN.')),
+        const SnackBar(
+          content: Text('Please enter a username and a 4-digit PIN.'),
+        ),
       );
       return;
     }
 
     // Save state
-    ref.read(onboardingStateProvider.notifier).update((state) => state.copyWith(
-          username: username,
-          pinCode: pin,
-          // TODO: Add avatar selection later
-        ));
+    ref
+        .read(onboardingStateProvider.notifier)
+        .update(
+          (state) => state.copyWith(
+            username: username,
+            pinCode: pin,
+            // TODO: Add avatar selection later
+          ),
+        );
 
     // Move to next step
     context.push('/onboarding/family');
@@ -51,53 +59,99 @@ class _AdminProfileSetupScreenState extends ConsumerState<AdminProfileSetupScree
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.halftoneGrey,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              const ComicHeader(text: 'SETUP PROFILE', fontSize: 32),
-              const SizedBox(height: 10),
-              const Text(
-                'Create your Admin Identity',
-                style: TextStyle(fontFamily: 'Nunito', fontSize: 16, fontWeight: FontWeight.bold),
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        toolbarHeight: 120,
+        backgroundColor: AppColors.electricBlue,
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        title: const Column(
+          children: [
+            ComicHeader(
+              text: 'SETUP PROFILE',
+              fontSize: 32,
+              color: Colors.white,
+            ),
+            Text(
+              'Create your Admin Identity',
+              style: TextStyle(
+                fontFamily: 'Nunito',
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
-              const SizedBox(height: 40),
-              // Placeholder Avatar Picker
-              const CircleAvatar(
-                radius: 50,
-                backgroundColor: AppColors.electricBlue,
-                child: Icon(Icons.person, size: 50, color: Colors.white),
+            ),
+          ],
+        ),
+        shape: const Border(
+          bottom: BorderSide(color: AppColors.comicBlack, width: 2),
+        ),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
+                  // Placeholder Avatar Picker
+                  const CircleAvatar(
+                    radius: 50,
+                    backgroundColor: AppColors.lightningYellow,
+                    child: Icon(
+                      Icons.person,
+                      size: 50,
+                      color: AppColors.comicBlack,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  // TextButton(
+                  //   onPressed: () {},
+                  //   child: const Text('Change Avatar'),
+                  // ),
+                  const SizedBox(height: 20),
+                  ComicTextField(
+                    controller: _usernameController,
+                    label: 'YOUR SUPERHERO NAME',
+                    hintText: 'Super Dad',
+                  ),
+                  const SizedBox(height: 24),
+                  ComicTextField(
+                    controller: _pinController,
+                    label: 'SECRET PIN (4 Digits)',
+                    hintText: '1234',
+                    keyboardType: TextInputType.number,
+                    obscureText: true,
+                  ),
+                  // Keyboard padding
+                  SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
+                ],
               ),
-              const SizedBox(height: 8),
-              TextButton(onPressed: () {}, child: const Text('Change Avatar')),
-              const SizedBox(height: 32),
-              ComicTextField(
-                controller: _usernameController,
-                label: 'YOUR NAME',
-                hintText: 'Super Dad',
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(24.0),
+            decoration: const BoxDecoration(
+              color: AppColors.electricBlue,
+              border: Border(
+                top: BorderSide(color: AppColors.comicBlack, width: 2),
               ),
-              const SizedBox(height: 24),
-              ComicTextField(
-                controller: _pinController,
-                label: 'SECRET PIN (4 Digits)',
-                hintText: '1234',
-                keyboardType: TextInputType.number,
-                obscureText: true,
-              ),
-              const SizedBox(height: 48),
-              SizedBox(
+            ),
+            child: SafeArea(
+              top: false,
+              child: SizedBox(
                 width: double.infinity,
                 child: ComicButton(
                   text: 'NEXT STEP',
                   onPressed: _handleNext,
-                  color: AppColors.electricBlue,
+                  color: AppColors.lightningYellow,
+                  textColor: AppColors.comicBlack,
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

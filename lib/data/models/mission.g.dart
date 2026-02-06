@@ -41,7 +41,7 @@ const _$MissionDifficultyEnumMap = {
 
 const _$MissionStatusEnumMap = {
   MissionStatus.available: 'available',
-  MissionStatus.inProgress: 'inProgress',
-  MissionStatus.pendingApproval: 'pendingApproval',
+  MissionStatus.inProgress: 'in_progress',
+  MissionStatus.pendingApproval: 'pending_approval',
   MissionStatus.completed: 'completed',
 };

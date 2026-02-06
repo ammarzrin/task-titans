@@ -35,12 +35,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             email: _emailController.text.trim(),
             password: _passwordController.text.trim(),
           );
-      // Navigation will be handled by the router's auth listener
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: $e'),
+            content: Text('Invalid credentials!'),
             backgroundColor: AppColors.vigilanteRed,
           ),
         );
@@ -54,60 +53,97 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.halftoneGrey,
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const ComicHeader(text: 'TASK TITANS', fontSize: 40),
-              const SizedBox(height: 8),
-              Text(
-                'FAMILY LOGIN',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontFamily: 'Bungee',
-                  color: AppColors.midnightGrey,
-                ),
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        toolbarHeight: 120,
+        backgroundColor: AppColors.electricBlue,
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        title: const Column(
+          children: [
+            ComicHeader(text: 'TASK TITANS', fontSize: 32, color: Colors.white),
+            Text(
+              'FAMILY LOGIN',
+              style: TextStyle(
+                fontFamily: 'Bungee',
+                fontSize: 16,
+                color: Colors.white,
               ),
-              const SizedBox(height: 48),
-              ComicTextField(
-                controller: _emailController,
-                label: 'Email Address',
-                hintText: 'parent@example.com',
-                keyboardType: TextInputType.emailAddress,
-              ),
-              const SizedBox(height: 24),
-              ComicTextField(
-                controller: _passwordController,
-                label: 'Password',
-                hintText: '••••••••',
-                obscureText: true,
-              ),
-              const SizedBox(height: 48),
-              SizedBox(
-                width: double.infinity,
-                child: ComicButton(
-                  text: _isLoading ? 'LOADING...' : 'ENTER HQ',
-                  onPressed: _isLoading ? null : _handleLogin,
-                  color: AppColors.electricBlue,
-                ),
-              ),
-              const SizedBox(height: 24),
-              TextButton(
-                onPressed: () {
-                  context.push('/signup');
-                },
-                child: Text(
-                  'Create New Family Account',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.electricBlue,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
+        shape: const Border(
+          bottom: BorderSide(color: AppColors.comicBlack, width: 2),
+        ),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                children: [
+                  const SizedBox(height: 24),
+                  ComicTextField(
+                    controller: _emailController,
+                    label: 'Email Address',
+                    hintText: 'parent@example.com',
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                  const SizedBox(height: 24),
+                  ComicTextField(
+                    controller: _passwordController,
+                    label: 'Password',
+                    hintText: '••••••••',
+                    obscureText: true,
+                  ),
+                  // Add padding equal to keyboard height
+                  SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(24.0),
+            decoration: const BoxDecoration(
+              color: AppColors.electricBlue,
+              border: Border(
+                top: BorderSide(color: AppColors.comicBlack, width: 2),
+              ),
+            ),
+            child: SafeArea(
+              top: false,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: double.infinity,
+                    child: ComicButton(
+                      text: _isLoading ? 'LOADING...' : 'ENTER HQ',
+                      onPressed: _isLoading ? null : _handleLogin,
+                      color: AppColors.lightningYellow,
+                      textColor: AppColors.comicBlack,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextButton(
+                    onPressed: () {
+                      context.push('/signup');
+                    },
+                    child: const Text(
+                      'NO ACCOUNT? CREATE HERE',
+                      style: TextStyle(
+                        fontFamily: 'Bungee',
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

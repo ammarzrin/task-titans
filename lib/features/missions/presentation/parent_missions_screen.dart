@@ -72,6 +72,7 @@ class ParentMissionsScreen extends ConsumerWidget {
           }
         },
         child: ComicCard(
+          expand: false,
           child: ListTile(
             leading: Container(
               width: 50,

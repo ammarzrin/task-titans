@@ -7,6 +7,9 @@ class ComicCard extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final double borderRadius;
   final VoidCallback? onTap;
+  /// Whether the card should expand to fill its parent. 
+  /// Set to false when used in a ListView or other unbounded height parent.
+  final bool expand;
 
   const ComicCard({
     super.key,
@@ -15,29 +18,12 @@ class ComicCard extends StatelessWidget {
     this.padding = const EdgeInsets.all(16.0),
     this.borderRadius = 16.0,
     this.onTap,
+    this.expand = true,
   });
 
   @override
   Widget build(BuildContext context) {
     const double offset = 4.0;
-
-    Widget cardContent = Container(
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(borderRadius),
-        border: Border.all(color: AppColors.comicBlack, width: 2),
-      ),
-      padding: padding,
-      child: child,
-    );
-
-    if (onTap != null) {
-      cardContent = InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(borderRadius),
-        child: cardContent,
-      );
-    }
 
     return Stack(
       children: [
@@ -55,9 +41,26 @@ class ComicCard extends StatelessWidget {
           ),
         ),
         // Content
-        Padding(
-          padding: const EdgeInsets.only(right: offset, bottom: offset),
-          child: cardContent,
+        Container(
+          margin: const EdgeInsets.only(right: offset, bottom: offset),
+          width: expand ? double.infinity : null,
+          height: expand ? double.infinity : null,
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(borderRadius),
+            border: Border.all(color: AppColors.comicBlack, width: 2),
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(borderRadius),
+              child: Padding(
+                padding: padding,
+                child: child,
+              ),
+            ),
+          ),
         ),
       ],
     );

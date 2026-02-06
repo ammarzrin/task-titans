@@ -15,7 +15,8 @@ class FamilySetupScreen extends ConsumerStatefulWidget {
   ConsumerState<FamilySetupScreen> createState() => _FamilySetupScreenState();
 }
 
-class _FamilySetupScreenState extends ConsumerState<FamilySetupScreen> with SingleTickerProviderStateMixin {
+class _FamilySetupScreenState extends ConsumerState<FamilySetupScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final _familyNameController = TextEditingController();
   final _inviteCodeController = TextEditingController();
@@ -40,7 +41,9 @@ class _FamilySetupScreenState extends ConsumerState<FamilySetupScreen> with Sing
     final user = ref.read(authRepositoryProvider).currentUser;
 
     if (user == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Error: User not found')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Error: User not found')));
       return;
     }
 
@@ -51,7 +54,9 @@ class _FamilySetupScreenState extends ConsumerState<FamilySetupScreen> with Sing
         if (_familyNameController.text.isEmpty) {
           throw Exception('Please enter a family name');
         }
-        await ref.read(authRepositoryProvider).createFamilyAndProfile(
+        await ref
+            .read(authRepositoryProvider)
+            .createFamilyAndProfile(
               userId: user.id,
               familyName: _familyNameController.text.trim(),
               username: onboardingState.username,
@@ -63,7 +68,9 @@ class _FamilySetupScreenState extends ConsumerState<FamilySetupScreen> with Sing
         if (_inviteCodeController.text.isEmpty) {
           throw Exception('Please enter an invite code');
         }
-        await ref.read(authRepositoryProvider).joinFamilyAndCreateProfile(
+        await ref
+            .read(authRepositoryProvider)
+            .joinFamilyAndCreateProfile(
               userId: user.id,
               inviteCode: _inviteCodeController.text.trim(),
               username: onboardingState.username,
@@ -81,7 +88,10 @@ class _FamilySetupScreenState extends ConsumerState<FamilySetupScreen> with Sing
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.vigilanteRed),
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: AppColors.vigilanteRed,
+          ),
         );
       }
     } finally {
@@ -93,57 +103,107 @@ class _FamilySetupScreenState extends ConsumerState<FamilySetupScreen> with Sing
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.halftoneGrey,
-      body: SafeArea(
-        child: Column(
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        toolbarHeight: 120,
+        backgroundColor: AppColors.electricBlue,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
+          onPressed: () => context.pop(),
+        ),
+        centerTitle: true,
+        title: const Column(
           children: [
-            const SizedBox(height: 20),
-            const ComicHeader(text: 'FAMILY SETUP', fontSize: 32),
-            const SizedBox(height: 20),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 24),
-              decoration: BoxDecoration(
+            ComicHeader(
+              text: 'FAMILY SETUP',
+              fontSize: 32,
+              color: Colors.white,
+            ),
+            Text(
+              'Build your Titans HQ!',
+              style: TextStyle(
+                fontFamily: 'Nunito',
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(width: 2),
-                boxShadow: const [BoxShadow(color: Colors.black, offset: Offset(4, 4))],
-              ),
-              child: TabBar(
-                controller: _tabController,
-                labelColor: Colors.white,
-                unselectedLabelColor: Colors.black,
-                indicator: BoxDecoration(
-                  color: AppColors.electricBlue,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(width: 2),
-                ),
-                indicatorPadding: const EdgeInsets.all(-2),
-                labelStyle: const TextStyle(fontFamily: 'Bungee'),
-                tabs: const [
-                  Tab(text: 'CREATE NEW'),
-                  Tab(text: 'JOIN EXISTING'),
-                ],
-              ),
-            ),
-            const SizedBox(height: 40),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildCreateTab(),
-                  _buildJoinTab(),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: ComicButton(
-                text: _isLoading ? 'SETTING UP...' : 'FINISH',
-                color: AppColors.hulkGreen,
-                onPressed: _isLoading ? null : _handleComplete,
               ),
             ),
           ],
         ),
+        shape: const Border(
+          bottom: BorderSide(color: AppColors.comicBlack, width: 2),
+        ),
+      ),
+      body: Column(
+        children: [
+          const SizedBox(height: 24),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 24),
+            height: 60,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(width: 2),
+              boxShadow: const [
+                BoxShadow(color: Colors.black, offset: Offset(4, 4)),
+              ],
+            ),
+            child: TabBar(
+              controller: _tabController,
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.black,
+              indicator: BoxDecoration(
+                color: AppColors.electricBlue,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(width: 2),
+              ),
+              indicatorPadding: const EdgeInsets.all(-2),
+              labelStyle: const TextStyle(fontFamily: 'Bungee', fontSize: 13),
+              tabs: const [
+                Tab(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    child: Text('CREATE NEW'),
+                  ),
+                ),
+                Tab(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    child: Text('JOIN EXISTING'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [_buildCreateTab(), _buildJoinTab()],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(24.0),
+            decoration: const BoxDecoration(
+              color: AppColors.electricBlue,
+              border: Border(
+                top: BorderSide(color: AppColors.comicBlack, width: 2),
+              ),
+            ),
+            child: SafeArea(
+              top: false,
+              child: SizedBox(
+                width: double.infinity,
+                child: ComicButton(
+                  text: _isLoading ? 'SETTING UP...' : 'FINISH',
+                  color: AppColors.lightningYellow,
+                  textColor: AppColors.comicBlack,
+                  onPressed: _isLoading ? null : _handleComplete,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -153,7 +213,11 @@ class _FamilySetupScreenState extends ConsumerState<FamilySetupScreen> with Sing
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
-          const Icon(Icons.home_rounded, size: 80, color: AppColors.electricBlue),
+          const Icon(
+            Icons.home_rounded,
+            size: 80,
+            color: AppColors.electricBlue,
+          ),
           const SizedBox(height: 24),
           const Text(
             'Start a new Task Titans family squad.',
@@ -166,6 +230,8 @@ class _FamilySetupScreenState extends ConsumerState<FamilySetupScreen> with Sing
             label: 'Family Name',
             hintText: 'The Incredible Family',
           ),
+          // Keyboard padding
+          SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
         ],
       ),
     );
@@ -189,6 +255,8 @@ class _FamilySetupScreenState extends ConsumerState<FamilySetupScreen> with Sing
             label: 'Invite Code',
             hintText: 'e.g. A1B2C3',
           ),
+          // Keyboard padding
+          SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
         ],
       ),
     );

@@ -32,12 +32,25 @@ class _CreateChildDialogState extends ConsumerState<CreateChildDialog> {
 
     setState(() => _isLoading = true);
     try {
-      final currentUser = ref.read(userNotifierProvider);
-      if (currentUser == null) {
+      final activeProfile = ref.read(userNotifierProvider);
+      String? familyId;
+
+      if (activeProfile != null) {
+        familyId = activeProfile.familyId;
+      } else {
+        // Fallback: If no active profile, get familyId from the profiles list
+        final profilesAsync = ref.read(familyProfilesProvider);
+        final profiles = profilesAsync.value;
+        if (profiles != null && profiles.isNotEmpty) {
+          familyId = profiles.first.familyId;
+        }
+      }
+
+      if (familyId == null) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Error: No active parent profile selected.'),
+              content: Text('Error: Could not determine Family ID.'),
             ),
           );
         }
@@ -48,7 +61,7 @@ class _CreateChildDialogState extends ConsumerState<CreateChildDialog> {
 
       final childProfile = Profile(
         id: childId,
-        familyId: currentUser.familyId,
+        familyId: familyId,
         role: UserRole.child,
         username: _nameController.text.trim(),
         avatarId: 'default_child', // TODO: Add picker
@@ -79,7 +92,11 @@ class _CreateChildDialogState extends ConsumerState<CreateChildDialog> {
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
       child: Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.8,
+        ),
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -89,40 +106,42 @@ class _CreateChildDialogState extends ConsumerState<CreateChildDialog> {
             BoxShadow(color: AppColors.comicBlack, offset: Offset(8, 8)),
           ],
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'NEW TITAN',
-              style: TextStyle(fontFamily: 'Bungee', fontSize: 24),
-            ),
-            const SizedBox(height: 24),
-            ComicTextField(
-              controller: _nameController,
-              label: 'HERO NAME',
-              hintText: 'Super Kid',
-            ),
-            const SizedBox(height: 16),
-            ComicTextField(
-              controller: _pinController,
-              label: 'PIN CODE',
-              hintText: '0000',
-              keyboardType: TextInputType.number,
-              obscureText: true,
-            ),
-            const SizedBox(height: 24),
-            ComicButton(
-              text: 'RECRUIT',
-              onPressed: _createChild,
-              color: AppColors.hulkGreen,
-            ),
-            const SizedBox(height: 12),
-            ComicButton(
-              text: 'CANCEL',
-              onPressed: () => context.pop(),
-              color: AppColors.halftoneGrey,
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'NEW TITAN',
+                style: TextStyle(fontFamily: 'Bungee', fontSize: 24),
+              ),
+              const SizedBox(height: 24),
+              ComicTextField(
+                controller: _nameController,
+                label: 'HERO NAME',
+                hintText: 'Super Kid',
+              ),
+              const SizedBox(height: 16),
+              ComicTextField(
+                controller: _pinController,
+                label: 'PIN CODE',
+                hintText: '0000',
+                keyboardType: TextInputType.number,
+                obscureText: true,
+              ),
+              const SizedBox(height: 24),
+              ComicButton(
+                text: 'RECRUIT',
+                onPressed: _createChild,
+                color: AppColors.hulkGreen,
+              ),
+              const SizedBox(height: 12),
+              ComicButton(
+                text: 'CANCEL',
+                onPressed: () => context.pop(),
+                color: AppColors.vigilanteRed,
+              ),
+            ],
+          ),
         ),
       ),
     );

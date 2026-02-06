@@ -34,19 +34,35 @@ class MissionRepository {
 
   // Update mission status (e.g., Parent approves)
   Future<void> updateMissionStatus(String missionId, MissionStatus status) async {
-    // Note: status.name gives 'inProgress', but we need 'in_progress' for DB enum
-    // We can use the JsonKey annotation logic if we had a helper, but manual map is safe here
-    String statusString;
-    switch (status) {
-      case MissionStatus.available: statusString = 'available'; break;
-      case MissionStatus.inProgress: statusString = 'in_progress'; break;
-      case MissionStatus.pendingApproval: statusString = 'pending_approval'; break;
-      case MissionStatus.completed: statusString = 'completed'; break;
-    }
+    final statusString = _getStatusString(status);
 
     await _supabase
         .from('missions')
         .update({'status': statusString})
         .eq('id', missionId);
+  }
+
+  // Child claims a mission
+  Future<void> claimMission(String missionId, String childId) async {
+    await _supabase.from('missions').update({
+      'status': 'in_progress',
+      'assigned_to': childId,
+    }).eq('id', missionId);
+  }
+
+  // Child marks mission as complete
+  Future<void> completeMission(String missionId) async {
+    await _supabase.from('missions').update({
+      'status': 'pending_approval',
+    }).eq('id', missionId);
+  }
+
+  String _getStatusString(MissionStatus status) {
+    switch (status) {
+      case MissionStatus.available: return 'available';
+      case MissionStatus.inProgress: return 'in_progress';
+      case MissionStatus.pendingApproval: return 'pending_approval';
+      case MissionStatus.completed: return 'completed';
+    }
   }
 }

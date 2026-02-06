@@ -11,9 +11,9 @@ enum MissionDifficulty {
 
 enum MissionStatus {
   available,
-  @JsonKey(name: 'in_progress')
+  @JsonValue('in_progress')
   inProgress,
-  @JsonKey(name: 'pending_approval')
+  @JsonValue('pending_approval')
   pendingApproval,
   completed,
 }
