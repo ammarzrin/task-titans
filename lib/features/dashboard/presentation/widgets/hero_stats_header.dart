@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tasktitans/core/theme/app_colors.dart';
 import 'package:tasktitans/core/widgets/comic_card.dart';
 import 'package:tasktitans/data/models/profile.dart';
-
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:tasktitans/features/auth/application/user_notifier.dart';
 
 class HeroStatsHeader extends ConsumerWidget {
@@ -15,7 +14,6 @@ class HeroStatsHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Logic for XP progress bar
-    // Assuming Level 1 is 0-500 XP, Level 2 is 500-1000, etc. (Simplistic for now)
     final int currentXp = profile.xp ?? 0;
     final int level = profile.level ?? 1;
     final int xpInLevel = currentXp % 500;
@@ -23,76 +21,72 @@ class HeroStatsHeader extends ConsumerWidget {
 
     return ComicCard(
       backgroundColor: AppColors.pureWhite,
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(16),
       expand: false,
-      child: Stack(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Row 1: Hero Name
           Row(
             children: [
-              // Avatar & Level Badge
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Container(
-                    width: 70,
-                    height: 70,
-                    decoration: BoxDecoration(
-                      color: AppColors.electricBlue,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.comicBlack, width: 2),
-                    ),
-                    child: const Icon(Icons.person, size: 40, color: Colors.white),
+              Center(
+                child: Text(
+                  profile.username.toUpperCase(),
+                  style: const TextStyle(
+                    fontFamily: 'Bungee',
+                    fontSize: 24,
+                    color: AppColors.comicBlack,
                   ),
-                  Positioned(
-                    bottom: -5,
-                    right: -5,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: AppColors.vigilanteRed,
-                        border: Border.all(color: AppColors.comicBlack, width: 2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        'Lvl $level',
-                        style: const TextStyle(
-                          fontFamily: 'Bungee',
-                          color: Colors.white,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              // Level Indicator
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: AppColors.electricBlue,
+                  border: Border.all(color: AppColors.comicBlack, width: 2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  'LVL. $level',
+                  style: const TextStyle(
+                    fontFamily: 'Bungee',
+                    color: Colors.white,
+                    fontSize: 16,
                   ),
-                ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // Row 2: Avatar and Progress Column
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Avatar
+              Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: AppColors.electricBlue,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: AppColors.comicBlack, width: 2),
+                ),
+                child: const Icon(Icons.person, size: 35, color: Colors.white),
               ),
               const SizedBox(width: 16),
-              // Name, XP Bar, and Gold
+              // Level & XP Column
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          profile.username.toUpperCase(),
-                          style: const TextStyle(
-                            fontFamily: 'Bungee',
-                            fontSize: 18,
-                            color: AppColors.comicBlack,
-                          ),
-                        ),
-                        _buildGoldStash(profile.gold ?? 0),
-                        const SizedBox(width: 32), // Space for exit button
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    // XP Bar Label
+                    // XP Progress Header
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
-                          'ENERGY (XP)',
+                          'XP PROGRESS',
                           style: TextStyle(
                             fontFamily: 'Bungee',
                             fontSize: 10,
@@ -111,11 +105,14 @@ class HeroStatsHeader extends ConsumerWidget {
                     const SizedBox(height: 4),
                     // XP Bar
                     Container(
-                      height: 16,
+                      height: 12,
                       width: double.infinity,
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        border: Border.all(color: AppColors.comicBlack, width: 2),
+                        border: Border.all(
+                          color: AppColors.comicBlack,
+                          width: 2,
+                        ),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: ClipRRect(
@@ -134,29 +131,14 @@ class HeroStatsHeader extends ConsumerWidget {
               ),
             ],
           ),
-          // Exit/Logout Button
-          Positioned(
-            top: 0,
-            right: 0,
-            child: GestureDetector(
-              onTap: () {
-                ref.read(userNotifierProvider.notifier).logout();
-                context.go('/profile-selection');
-              },
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: AppColors.halftoneGrey,
-                  border: Border.all(color: AppColors.comicBlack, width: 2),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(
-                  Icons.exit_to_app,
-                  size: 18,
-                  color: AppColors.comicBlack,
-                ),
-              ),
-            ),
+          const SizedBox(height: 16),
+          // Row 3: Gold and Exit (Balanced)
+          Row(
+            children: [
+              Expanded(child: _buildGoldStash(profile.gold ?? 0)),
+              const SizedBox(width: 12),
+              Expanded(child: _buildLogoutButton(context, ref)),
+            ],
           ),
         ],
       ),
@@ -165,26 +147,62 @@ class HeroStatsHeader extends ConsumerWidget {
 
   Widget _buildGoldStash(int gold) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      height: 40,
       decoration: BoxDecoration(
         color: AppColors.lightningYellow,
         border: Border.all(color: AppColors.comicBlack, width: 2),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.monetization_on, size: 16, color: AppColors.comicBlack),
-          const SizedBox(width: 4),
+          const Icon(
+            Icons.monetization_on,
+            size: 18,
+            color: AppColors.comicBlack,
+          ),
+          const SizedBox(width: 6),
           Text(
             '$gold',
             style: const TextStyle(
               fontFamily: 'Bungee',
-              fontSize: 14,
+              fontSize: 16,
               color: AppColors.comicBlack,
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildLogoutButton(BuildContext context, WidgetRef ref) {
+    return GestureDetector(
+      onTap: () {
+        ref.read(userNotifierProvider.notifier).logout();
+        context.go('/profile-selection');
+      },
+      child: Container(
+        height: 40,
+        decoration: BoxDecoration(
+          color: AppColors.vigilanteRed,
+          border: Border.all(color: AppColors.comicBlack, width: 2),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.logout, size: 18, color: Colors.white),
+            SizedBox(width: 6),
+            Text(
+              'EXIT',
+              style: TextStyle(
+                fontFamily: 'Bungee',
+                fontSize: 14,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

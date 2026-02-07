@@ -5,10 +5,7 @@ import 'package:tasktitans/core/theme/app_colors.dart';
 class ParentDashboardShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
-  const ParentDashboardShell({
-    super.key,
-    required this.navigationShell,
-  });
+  const ParentDashboardShell({super.key, required this.navigationShell});
 
   void _onTap(int index) {
     navigationShell.goBranch(
@@ -23,7 +20,9 @@ class ParentDashboardShell extends StatelessWidget {
       body: navigationShell,
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: AppColors.comicBlack, width: 2)),
+          border: Border(
+            top: BorderSide(color: AppColors.comicBlack, width: 2),
+          ),
         ),
         child: BottomNavigationBar(
           currentIndex: navigationShell.currentIndex,
@@ -38,13 +37,10 @@ class ParentDashboardShell extends StatelessWidget {
               icon: Icon(Icons.rocket_launch),
               label: 'MISSIONS',
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.store),
-              label: 'REWARDS',
-            ),
+            BottomNavigationBarItem(icon: Icon(Icons.store), label: 'REWARDS'),
             BottomNavigationBarItem(
               icon: Icon(Icons.people),
-              label: 'TITANS',
+              label: 'MY FAMILY',
             ),
           ],
         ),

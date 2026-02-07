@@ -22,7 +22,7 @@ class ChildDashboardScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      backgroundColor: AppColors.halftoneGrey,
+      backgroundColor: AppColors.electricBlue,
       body: SafeArea(
         child: Column(
           children: [
@@ -32,15 +32,24 @@ class ChildDashboardScreen extends ConsumerWidget {
             ),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: ComicHeader(text: 'AVAILABLE MISSIONS', fontSize: 20),
+              child: ComicHeader(
+                text: 'AVAILABLE MISSIONS',
+                fontSize: 20,
+                color: AppColors.pureWhite,
+              ),
             ),
             Expanded(
               child: missionsAsync.when(
                 data: (missions) {
-                  // Filter missions that are available or in_progress for this child
+                  // Filter missions that are strictly available and unassigned (Open to All)
+                  // OR assigned specifically to this child but not yet claimed (if that state existed, but currently 'available' implies unassigned or open).
+                  // Simplification: Show missions that are 'available' AND (assigned_to is NULL OR assigned_to == me)
                   final displayMissions = missions.where((m) {
-                    return m.status == MissionStatus.available || 
-                           (m.status == MissionStatus.inProgress && m.assignedTo == activeProfile.id);
+                    final isAvailable = m.status == MissionStatus.available;
+                    final isUnassigned = m.assignedTo == null;
+                    final isAssignedToMe = m.assignedTo == activeProfile.id;
+
+                    return isAvailable && (isUnassigned || isAssignedToMe);
                   }).toList();
 
                   if (displayMissions.isEmpty) {
@@ -48,7 +57,11 @@ class ChildDashboardScreen extends ConsumerWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.sentiment_satisfied_alt, size: 64, color: Colors.grey),
+                          const Icon(
+                            Icons.sentiment_satisfied_alt,
+                            size: 64,
+                            color: Colors.grey,
+                          ),
                           const SizedBox(height: 16),
                           Text(
                             'ALL MISSIONS COMPLETE!\nWAIT FOR NEW ONES, TITAN!',
@@ -66,12 +79,13 @@ class ChildDashboardScreen extends ConsumerWidget {
 
                   return GridView.builder(
                     padding: const EdgeInsets.all(16),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      childAspectRatio: 0.8,
-                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                          childAspectRatio: 0.8,
+                        ),
                     itemCount: displayMissions.length,
                     itemBuilder: (context, index) {
                       final mission = displayMissions[index];
@@ -80,7 +94,8 @@ class ChildDashboardScreen extends ConsumerWidget {
                         onTap: () {
                           showDialog(
                             context: context,
-                            builder: (context) => MissionDetailDialog(mission: mission),
+                            builder: (context) =>
+                                MissionDetailDialog(mission: mission),
                           );
                         },
                       );

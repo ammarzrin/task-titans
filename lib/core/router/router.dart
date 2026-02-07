@@ -17,6 +17,7 @@ import 'package:tasktitans/features/auth/presentation/signup_screen.dart';
 
 import 'package:tasktitans/features/dashboard/presentation/child_dashboard_screen.dart';
 import 'package:tasktitans/features/dashboard/presentation/child_dashboard_shell.dart';
+import 'package:tasktitans/features/missions/presentation/child_missions_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authRepository = ref.watch(authRepositoryProvider);
@@ -118,9 +119,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: '/child/missions',
-                builder: (context, state) => const Scaffold(
-                  body: Center(child: Text('My Active Missions')),
-                ),
+                builder: (context, state) => const ChildMissionsScreen(),
               ),
             ],
           ),
@@ -128,9 +127,8 @@ final routerProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: '/child/store',
-                builder: (context, state) => const Scaffold(
-                  body: Center(child: Text('Loot Store')),
-                ),
+                builder: (context, state) =>
+                    const Scaffold(body: Center(child: Text('Loot Store'))),
               ),
             ],
           ),

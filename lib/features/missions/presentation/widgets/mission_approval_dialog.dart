@@ -5,6 +5,7 @@ import 'package:tasktitans/core/theme/app_colors.dart';
 import 'package:tasktitans/core/widgets/comic_button.dart';
 import 'package:tasktitans/data/models/mission.dart';
 import 'package:tasktitans/data/repositories/mission_repository.dart';
+import 'package:tasktitans/features/auth/application/profile_list_provider.dart';
 import 'package:tasktitans/features/missions/application/mission_list_provider.dart';
 
 class MissionApprovalDialog extends ConsumerStatefulWidget {
@@ -24,14 +25,15 @@ class _MissionApprovalDialogState extends ConsumerState<MissionApprovalDialog> {
     try {
       final repo = ref.read(missionRepositoryProvider);
       if (isApproved) {
-        // TODO: RPC call to award XP/Gold would be better here for atomicity
-        await repo.updateMissionStatus(widget.mission.id, MissionStatus.completed);
+        await repo.approveMission(widget.mission.id);
       } else {
         // Re-open mission
         await repo.updateMissionStatus(widget.mission.id, MissionStatus.available);
       }
       
       ref.invalidate(missionsProvider);
+      ref.invalidate(familyProfilesProvider); // Force refresh of profile stats (XP/Gold)
+      
       if (mounted) context.pop();
     } catch (e) {
       if (mounted) {

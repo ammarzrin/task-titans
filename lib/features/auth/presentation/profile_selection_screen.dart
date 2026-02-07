@@ -186,11 +186,15 @@ class ProfileSelectionScreen extends ConsumerWidget {
             const CircleAvatar(
               radius: 30,
               backgroundColor: AppColors.pureWhite,
-              child: Icon(Icons.add, size: 40, color: AppColors.comicBlack),
+              child: Icon(
+                Icons.add_circle,
+                size: 40,
+                color: AppColors.comicBlack,
+              ),
             ),
             const SizedBox(height: 12),
             Text(
-              'NEW HERO',
+              'ADD TITAN',
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                 fontFamily: 'Bungee',
                 color: AppColors.comicBlack,

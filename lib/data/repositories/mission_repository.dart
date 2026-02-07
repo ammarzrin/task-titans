@@ -32,6 +32,24 @@ class MissionRepository {
     await _supabase.from('missions').insert(json);
   }
 
+  // Update an existing mission
+  Future<void> updateMission(Mission mission) async {
+    final json = mission.toJson();
+    final id = json.remove('id');
+    
+    await _supabase.from('missions').update(json).eq('id', id);
+  }
+
+  // Delete a mission
+  Future<void> deleteMission(String missionId) async {
+    await _supabase.from('missions').delete().eq('id', missionId);
+  }
+
+  // Parent approves mission and awards rewards via RPC
+  Future<void> approveMission(String missionId) async {
+    await _supabase.rpc('approve_mission', params: {'mission_id': missionId});
+  }
+
   // Update mission status (e.g., Parent approves)
   Future<void> updateMissionStatus(String missionId, MissionStatus status) async {
     final statusString = _getStatusString(status);

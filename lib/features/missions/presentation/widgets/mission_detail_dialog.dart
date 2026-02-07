@@ -14,7 +14,8 @@ class MissionDetailDialog extends ConsumerStatefulWidget {
   const MissionDetailDialog({super.key, required this.mission});
 
   @override
-  ConsumerState<MissionDetailDialog> createState() => _MissionDetailDialogState();
+  ConsumerState<MissionDetailDialog> createState() =>
+      _MissionDetailDialogState();
 }
 
 class _MissionDetailDialogState extends ConsumerState<MissionDetailDialog> {
@@ -27,7 +28,7 @@ class _MissionDetailDialogState extends ConsumerState<MissionDetailDialog> {
     setState(() => _isLoading = true);
     try {
       final repo = ref.read(missionRepositoryProvider);
-      
+
       if (widget.mission.status == MissionStatus.available) {
         // CLAIM
         await repo.claimMission(widget.mission.id, activeProfile.id);
@@ -41,7 +42,10 @@ class _MissionDetailDialogState extends ConsumerState<MissionDetailDialog> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.vigilanteRed),
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: AppColors.vigilanteRed,
+          ),
         );
       }
     } finally {
@@ -52,7 +56,7 @@ class _MissionDetailDialogState extends ConsumerState<MissionDetailDialog> {
   @override
   Widget build(BuildContext context) {
     final isClaiming = widget.mission.status == MissionStatus.available;
-    
+
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
@@ -72,13 +76,17 @@ class _MissionDetailDialogState extends ConsumerState<MissionDetailDialog> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: AppColors.electricBlue.withOpacity(0.1),
+                color: AppColors.electricBlue,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.rocket_launch, size: 64, color: AppColors.electricBlue),
+              child: const Icon(
+                Icons.rocket_launch,
+                size: 64,
+                color: AppColors.electricBlue,
+              ),
             ),
             const SizedBox(height: 24),
-            
+
             // Title
             Text(
               widget.mission.title.toUpperCase(),
@@ -86,26 +94,34 @@ class _MissionDetailDialogState extends ConsumerState<MissionDetailDialog> {
               style: const TextStyle(fontFamily: 'Bungee', fontSize: 22),
             ),
             const SizedBox(height: 16),
-            
+
             // Rewards Row
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildRewardPill('${widget.mission.goldReward} GOLD', AppColors.lightningYellow),
+                _buildRewardPill(
+                  '${widget.mission.goldReward} GOLD',
+                  AppColors.lightningYellow,
+                ),
                 const SizedBox(width: 8),
-                _buildRewardPill('${widget.mission.xpReward} XP', AppColors.hulkGreen),
+                _buildRewardPill(
+                  '${widget.mission.xpReward} XP',
+                  AppColors.hulkGreen,
+                ),
               ],
             ),
             const SizedBox(height: 32),
-            
+
             // Action Button
             ComicButton(
-              text: _isLoading ? 'WORKING...' : (isClaiming ? 'CLAIM MISSION!' : 'MARK AS DONE!'),
+              text: _isLoading
+                  ? 'WORKING...'
+                  : (isClaiming ? 'CLAIM MISSION!' : 'MARK AS DONE!'),
               color: isClaiming ? AppColors.electricBlue : AppColors.hulkGreen,
               onPressed: _isLoading ? null : _handleAction,
             ),
             const SizedBox(height: 12),
-            
+
             // Cancel Button
             TextButton(
               onPressed: () => context.pop(),
